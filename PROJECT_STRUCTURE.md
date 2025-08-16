@@ -1,172 +1,190 @@
 # Quiz Generator with Timer - Project Structure
 
-## Overview
-A comprehensive quiz application with timer functionality, built using Java backend and HTML/CSS/JavaScript frontend.
-
-## Project Structure
+## 📁 Directory Structure
 
 ```
 Quiz Generator with Timer/
+├── 📄 README.md                           # Main project documentation
+├── 📄 PROJECT_STRUCTURE.md                # This file - project structure guide
+├── 📄 pom.xml                             # Maven configuration (optional)
+├── 📄 compile-and-run.bat                 # Windows run script
+├── 📄 compile-and-run.sh                  # Linux/macOS run script
+├── 📄 run-console.bat                     # Alternative Windows script
 ├── 📁 src/
 │   └── 📁 main/
 │       ├── 📁 java/
 │       │   └── 📁 com/
 │       │       └── 📁 quizgenerator/
+│       │           ├── 📄 ConsoleQuiz.java           # Main console application
 │       │           ├── 📁 model/
 │       │           │   ├── 📄 Question.java          # Question data model
 │       │           │   └── 📄 QuizSession.java       # Quiz session management
-│       │           ├── 📁 service/
-│       │           │   ├── 📄 QuestionService.java   # Question loading & management
-│       │           │   └── 📄 QuizService.java       # Quiz session & scoring logic
-│       │           ├── 📁 controller/
-│       │           │   └── 📄 QuizController.java    # HTTP request handling
-│       │           ├── 📄 Main.java                  # Web application entry point
-│       │           └── 📄 ConsoleQuiz.java           # Console application entry point
+│       │           └── 📁 service/
+│       │               ├── 📄 QuestionService.java   # Question management service
+│       │               └── 📄 QuizService.java       # Quiz session service
 │       └── 📁 resources/
-│           ├── 📁 static/
-│           │   ├── 📁 css/
-│           │   │   └── 📄 style.css                  # Modern responsive styling
-│           │   ├── 📁 js/
-│           │   │   └── 📄 quiz.js                    # Frontend JavaScript logic
-│           │   └── 📄 index.html                     # Main web interface
-│           └── 📄 questions.json                     # Quiz questions database
-├── 📄 pom.xml                                        # Maven project configuration
-├── 📄 README.md                                      # Project documentation
-├── 📄 PROJECT_STRUCTURE.md                           # This file
-├── 📄 run.bat                                        # Windows execution script
-└── 📄 run.sh                                         # Unix/Linux execution script
+│           └── 📄 questions.json                     # Legacy JSON file (not used)
+└── 📁 target/
+    └── 📁 classes/                        # Compiled Java classes
 ```
 
-## Key Features
+## 🏗️ Architecture Overview
 
-### 🎯 Core Functionality
-- **Question Management**: Load questions from JSON file
-- **Random MCQ Generation**: Randomly select questions for each quiz
-- **Countdown Timer**: 30-second timer per question with visual feedback
-- **Score Tracking**: Real-time score calculation and display
-- **Session Management**: Track quiz progress and results
+### Core Components
 
-### 🌐 Web Application
-- **Modern UI**: Beautiful, responsive design with gradient backgrounds
-- **Real-time Updates**: Live score and progress tracking
-- **Interactive Elements**: Hover effects, animations, and visual feedback
-- **Mobile Responsive**: Works on all device sizes
-- **Keyboard Shortcuts**: Number keys (1-4) for answers, Enter to submit
+#### 1. **ConsoleQuiz.java** - Main Application
+- **Purpose**: Entry point and user interface
+- **Features**:
+  - Menu-driven interface
+  - Quiz type selection
+  - Timer management
+  - User input handling
+  - Results display
 
-### 💻 Console Application
-- **Text-based Interface**: Simple console-based quiz experience
-- **Timer Functionality**: Countdown timer with automatic submission
-- **Detailed Results**: Comprehensive score and performance analysis
-- **Performance Feedback**: Encouraging messages based on accuracy
+#### 2. **Model Layer** (`model/`)
 
-## Technology Stack
+##### Question.java
+- **Purpose**: Data model for quiz questions
+- **Properties**:
+  - `id`: Unique question identifier
+  - `question`: Question text
+  - `options`: List of multiple choice options
+  - `correctAnswer`: Index of correct answer (0-based)
+  - `timeLimit`: Time limit in seconds
 
-### Backend
-- **Java 11+**: Core application logic
-- **Maven**: Build tool and dependency management
-- **Jackson**: JSON processing for questions
-- **HTTP Server**: Built-in Java HTTP server (no Spring Boot)
+##### QuizSession.java
+- **Purpose**: Manages quiz session state and progress
+- **Features**:
+  - Session tracking
+  - Score calculation
+  - Progress monitoring
+  - Answer validation
+  - Performance analytics
 
-### Frontend
-- **HTML5**: Semantic markup
-- **CSS3**: Modern styling with gradients, animations, and responsive design
-- **JavaScript (ES6+)**: Vanilla JS with async/await for API calls
-- **Font Awesome**: Icons for better UX
-- **Google Fonts**: Inter font family for modern typography
+#### 3. **Service Layer** (`service/`)
 
-## API Endpoints
+##### QuestionService.java
+- **Purpose**: Manages question data and operations
+- **Features**:
+  - Hardcoded question database (25 questions)
+  - Random question selection
+  - Question shuffling
+  - Category management
 
-### Quiz Management
-- `POST /api/quiz/create` - Create new quiz session
-- `POST /api/quiz/answer` - Submit answer for current question
-- `POST /api/quiz/end` - End quiz session early
+##### QuizService.java
+- **Purpose**: Orchestrates quiz sessions
+- **Features**:
+  - Session creation
+  - Session management
+  - Question distribution
+  - Service coordination
 
-### Data Retrieval
-- `GET /api/quiz/{sessionId}/question` - Get current question
-- `GET /api/quiz/{sessionId}/stats` - Get session statistics
-- `GET /api/quiz/{sessionId}/results` - Get final results
+## 🔄 Data Flow
 
-### Static Files
-- `GET /` - Main application page
-- `GET /css/style.css` - Stylesheet
-- `GET /js/quiz.js` - JavaScript logic
-
-## Question Format
-
-Questions are stored in JSON format with the following structure:
-
-```json
-{
-  "questions": [
-    {
-      "id": 1,
-      "question": "What is the capital of France?",
-      "options": ["London", "Berlin", "Paris", "Madrid"],
-      "correctAnswer": 2,
-      "timeLimit": 30
-    }
-  ]
-}
+```
+User Input → ConsoleQuiz → QuizService → QuestionService → Question Model
+     ↓
+Results ← ConsoleQuiz ← QuizSession ← Answer Processing ← User Selection
 ```
 
-## Running the Application
+## 🎯 Key Features Implementation
 
-### Prerequisites
-- Java 11 or higher
-- Maven 3.6 or higher
+### Timer System
+- **Location**: `ConsoleQuiz.java`
+- **Implementation**: `ScheduledExecutorService`
+- **Features**:
+  - 30-second countdown per question
+  - Thread-safe execution
+  - Automatic timeout handling
 
-### Quick Start
-1. **Windows**: Double-click `run.bat`
-2. **Unix/Linux**: Run `./run.sh`
-3. **Manual**: 
-   ```bash
-   mvn clean compile
-   mvn exec:java -Dexec.mainClass="com.quizgenerator.Main"
-   ```
+### Scoring System
+- **Location**: `QuizSession.java`
+- **Implementation**: Real-time score tracking
+- **Features**:
+  - 10 points per correct answer
+  - Accuracy percentage calculation
+  - Performance feedback
 
-### Access Points
-- **Web Application**: http://localhost:8080
-- **Console Application**: Run directly in terminal
+### Question Management
+- **Location**: `QuestionService.java`
+- **Implementation**: Hardcoded question database
+- **Features**:
+  - 25 diverse questions
+  - Multiple categories
+  - Random selection and shuffling
 
-## Customization
+## 🛠️ Build and Run Process
+
+### Compilation Order
+1. `Question.java` - Base model
+2. `QuizSession.java` - Depends on Question
+3. `QuestionService.java` - Depends on Question
+4. `QuizService.java` - Depends on QuestionService
+5. `ConsoleQuiz.java` - Depends on all services
+
+### Run Scripts
+- **Windows**: `compile-and-run.bat`
+- **Linux/macOS**: `compile-and-run.sh`
+- **Manual**: Direct javac/java commands
+
+## 📊 Question Categories
+
+The application includes questions from:
+- **Geography** (5 questions)
+- **Science** (6 questions)
+- **History** (3 questions)
+- **Mathematics** (2 questions)
+- **Literature** (2 questions)
+- **General Knowledge** (7 questions)
+
+## 🔧 Configuration Points
 
 ### Adding Questions
-Edit `src/main/resources/questions.json` to add or modify questions.
+- **File**: `QuestionService.java`
+- **Method**: `initializeQuestions()`
+- **Format**: `new Question(id, question, options, correctAnswer, timeLimit)`
 
-### Styling
-Modify `src/main/resources/static/css/style.css` for custom styling.
+### Modifying Timer
+- **File**: `QuestionService.java`
+- **Parameter**: `timeLimit` in Question constructor
 
-### Configuration
-- Timer duration: Modify `timeLimit` in questions.json
-- Points per question: Change in `QuizSession.submitAnswer()`
-- Server port: Modify `PORT` constant in `Main.java`
+### Adjusting Scoring
+- **File**: `QuizSession.java`
+- **Method**: `submitAnswer()`
 
-## Performance Features
+### Customizing UI
+- **File**: `ConsoleQuiz.java`
+- **Sections**: Menu display, question display, results display
 
-### Frontend
-- **Lazy Loading**: Questions loaded on demand
-- **Efficient DOM Updates**: Minimal re-rendering
-- **Smooth Animations**: CSS transitions for better UX
-- **Error Handling**: Graceful error recovery
+## 🚀 Deployment
 
-### Backend
-- **Session Management**: Efficient session tracking
-- **Memory Management**: Automatic cleanup of expired sessions
-- **Concurrent Access**: Thread-safe session handling
-- **JSON Processing**: Fast question loading and serialization
+### Requirements
+- Java 11 or higher
+- No external dependencies
+- Cross-platform compatibility
 
-## Security Considerations
+### Distribution
+- Source code distribution
+- Compiled JAR file (optional)
+- Run scripts for different platforms
 
-- **Input Validation**: All user inputs are validated
-- **Session Isolation**: Each quiz session is independent
-- **Error Handling**: Graceful error handling without exposing internals
-- **CORS Support**: Proper CORS headers for web requests
+## 📝 Development Notes
 
-## Future Enhancements
+### Design Patterns
+- **MVC Pattern**: Model-View-Controller separation
+- **Service Layer**: Business logic encapsulation
+- **Singleton Pattern**: Service instances
 
-- **Database Integration**: Replace JSON with database storage
-- **User Authentication**: User accounts and progress tracking
-- **Question Categories**: Organize questions by topics
-- **Leaderboards**: Global and local score tracking
-- **Multiplayer**: Real-time multiplayer quiz sessions
-- **Question Editor**: Web-based question management interface
+### Error Handling
+- Input validation in `ConsoleQuiz.java`
+- Exception handling for timer operations
+- Graceful degradation for invalid inputs
+
+### Performance Considerations
+- Minimal memory footprint
+- Efficient question shuffling
+- Thread-safe timer implementation
+
+---
+
+**Note**: This project is designed as a pure Java console application with no external dependencies, making it highly portable and easy to deploy.
