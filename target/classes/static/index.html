@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Generator with Timer</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-brain"></i> Quiz Generator</h1>
+                <p>Test your knowledge with our interactive quiz!</p>
+            </div>
+        </header>
+
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="screen active">
+            <div class="welcome-content">
+                <div class="welcome-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <h2>Welcome to Quiz Generator!</h2>
+                <p>Challenge yourself with our collection of questions covering various topics.</p>
+                
+                <div class="quiz-options">
+                    <div class="option-card">
+                        <i class="fas fa-clock"></i>
+                        <h3>Quick Quiz</h3>
+                        <p>5 questions • 30 seconds each</p>
+                        <button class="btn btn-primary" onclick="startQuiz(5)">Start Quick Quiz</button>
+                    </div>
+                    
+                    <div class="option-card">
+                        <i class="fas fa-graduation-cap"></i>
+                        <h3>Standard Quiz</h3>
+                        <p>10 questions • 30 seconds each</p>
+                        <button class="btn btn-primary" onclick="startQuiz(10)">Start Standard Quiz</button>
+                    </div>
+                    
+                    <div class="option-card">
+                        <i class="fas fa-trophy"></i>
+                        <h3>Challenge Quiz</h3>
+                        <p>15 questions • 30 seconds each</p>
+                        <button class="btn btn-primary" onclick="startQuiz(15)">Start Challenge Quiz</button>
+                    </div>
+                </div>
+
+                <div class="custom-quiz">
+                    <h3>Custom Quiz</h3>
+                    <div class="custom-input">
+                        <input type="number" id="custom-question-count" min="1" max="25" value="10" placeholder="Number of questions">
+                        <button class="btn btn-secondary" onclick="startCustomQuiz()">Start Custom Quiz</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="screen">
+            <div class="quiz-header">
+                <div class="quiz-info">
+                    <span class="question-counter">Question <span id="current-question">1</span> of <span id="total-questions">10</span></span>
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                </div>
+                
+                <div class="quiz-stats">
+                    <div class="stat">
+                        <i class="fas fa-star"></i>
+                        <span id="current-score">0</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-clock"></i>
+                        <span id="timer">30</span>s
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-container">
+                <div class="question-card">
+                    <h2 id="question-text">Loading question...</h2>
+                    
+                    <div class="options-container" id="options-container">
+                        <!-- Options will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="quiz-controls">
+                <button class="btn btn-secondary" onclick="endQuiz()">
+                    <i class="fas fa-stop"></i> End Quiz
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="screen">
+            <div class="results-content">
+                <div class="results-header">
+                    <div class="results-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h2>Quiz Completed!</h2>
+                </div>
+
+                <div class="results-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="final-score">0</h3>
+                            <p>Total Score</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="correct-answers">0</h3>
+                            <p>Correct Answers</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="accuracy">0%</h3>
+                            <p>Accuracy</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="total-time">0s</h3>
+                            <p>Total Time</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="results-details" id="results-details">
+                    <!-- Detailed results will be populated by JavaScript -->
+                </div>
+
+                <div class="results-actions">
+                    <button class="btn btn-primary" onclick="restartQuiz()">
+                        <i class="fas fa-redo"></i> Take Another Quiz
+                    </button>
+                    <button class="btn btn-secondary" onclick="showWelcome()">
+                        <i class="fas fa-home"></i> Back to Home
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <p>Loading...</p>
+            </div>
+        </div>
+
+        <!-- Notification -->
+        <div id="notification" class="notification">
+            <div class="notification-content">
+                <i class="notification-icon"></i>
+                <span class="notification-message"></span>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/quiz.js"></script>
+</body>
+</html>
